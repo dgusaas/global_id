@@ -72,9 +72,10 @@ defmodule GlobalId do
     timestamp = timestamp()
     [prev_timestamp, serial] = state
     [timestamp, serial] = cond do
+                            serial === 4095 ->
+                              [prev_timestamp + 1, 0]
                             timestamp === prev_timestamp ->
-                              [timestamp, serial + 1]
-                            # Just in case
+                              [prev_timestamp, serial + 1]
                             timestamp < prev_timestamp ->
                               [prev_timestamp, serial + 1]
                             true ->
@@ -89,7 +90,7 @@ defmodule GlobalId do
   """
   @spec get_id(non_neg_integer(), non_neg_integer(), non_neg_integer()) :: non_neg_integer()
   def get_id(timestamp, node_id, serial) do
-    :binary.decode_unsigned(<<timestamp::41, node_id::11, serial::12>>)
+    :binary.decode_unsigned(<<0::1, timestamp::41, node_id::10, serial::12>>)
   end
 
   #
@@ -104,7 +105,7 @@ defmodule GlobalId do
   """
   @spec node_id() :: non_neg_integer()
   def node_id do
-    512
+    # 512
   end
 
   @doc """
@@ -112,6 +113,6 @@ defmodule GlobalId do
   """
   @spec timestamp() :: non_neg_integer()
   def timestamp do
-    System.os_time(:millisecond)
+    # System.monotonic_time(:millisecond)
   end
 end

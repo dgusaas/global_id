@@ -17,10 +17,10 @@ defmodule GlobalIdTest do
 
   test "uniqueness on same timestamp, system wide" do
     timestamp = 1632961191745
-    ids = Enum.to_list(0..1024) |> 
+    ids = Enum.to_list(0..1023) |> 
           Enum.map(fn node -> GlobalId.get_id(timestamp, node, 0) end) |>
           MapSet.new()
-    assert MapSet.size(ids) === 1025
+    assert MapSet.size(ids) === 1024
   end
 
   test "all unique, one node" do

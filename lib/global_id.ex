@@ -36,6 +36,7 @@ defmodule GlobalId do
   """
   @spec start_link() :: tuple()
   def start_link do
+    Process.sleep(1)
     Agent.start_link(fn -> [timestamp(), 0] end)
   end
 
@@ -73,10 +74,9 @@ defmodule GlobalId do
     [prev_timestamp, serial] = state
     [timestamp, serial] = cond do
                             serial === 4095 ->
-                              [prev_timestamp + 1, 0]
+                              Process.sleep(1)
+                              [timestamp() + 1, 0]
                             timestamp === prev_timestamp ->
-                              [prev_timestamp, serial + 1]
-                            timestamp < prev_timestamp ->
                               [prev_timestamp, serial + 1]
                             true ->
                               [timestamp, 0]
